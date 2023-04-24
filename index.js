@@ -1,5 +1,5 @@
 const express = require('express');
-const persons = require('./db.js');
+let persons = require('./db.js');
 const PORT = 3001;
 
 const app = express();
@@ -17,7 +17,21 @@ app.get('/info', (req, res) => {
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   const person = persons.find((person) => person.id === Number(id));
-  person ? res.json(person) : res.send('<p>Entry not found</p>');
+  person ? res.json(person) : res.status(404).end();
+});
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = req.params.id;
+  const person = persons.find((person) => person.id === Number(id));
+  if (person) {
+    persons = persons.filter((person) => person.id !== Number(id));
+    res.status(204).end();
+  }
+  res.status(404).end();
+});
+
+app.get('*', function (req, res) {
+  res.send('Page does not exist!', 404);
 });
 
 app.listen(PORT, () => {
