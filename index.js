@@ -4,18 +4,14 @@ const PORT = 3001;
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const today = new Date();
 
 app.get('/api/persons', (req, res) => {
   res.json(persons);
 });
 
 app.get('/info', (req, res) => {
-  res.write(`Phonebook has info for ${persons.length} people.`);
-  res.write(`${Date.now()}`);
-  res.end();
+  res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`);
 });
 
 app.listen(PORT, () => {
