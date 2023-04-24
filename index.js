@@ -9,7 +9,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/persons', (req, res) => {
-  res.send(persons);
+  res.json(persons);
+});
+
+app.get('/info', (req, res) => {
+  res.write(`Phonebook has info for ${persons.length} people.`);
+  res.write(`${Date.now()}`);
+  res.end();
 });
 
 app.listen(PORT, () => {
