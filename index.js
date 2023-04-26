@@ -3,6 +3,7 @@ let persons = require('./db.js');
 const PORT = 3001;
 
 const app = express();
+app.use(express.json());
 
 const today = new Date();
 
@@ -32,6 +33,13 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.get('*', function (req, res) {
   res.send('Page does not exist!', 404);
+});
+
+app.post('/api/persons', (req, res) => {
+  const newPerson = req.body;
+  const maxId = Math.max(...persons.map((n) => n.id));
+  persons = persons.concat({ ...newPerson, id: maxId + 1 });
+  res.json(persons);
 });
 
 app.listen(PORT, () => {
