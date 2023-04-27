@@ -36,9 +36,23 @@ app.get('*', function (req, res) {
 });
 
 app.post('/api/persons', (req, res) => {
-  const newPerson = req.body;
+  const incomingData = req.body;
+
+  if (!incomingData.number || !incomingData.name) {
+    return res.status(400).json({
+      error: 'number or name is missing',
+    });
+  }
+
+  const filterNames = persons.filter((person) => person.name === incomingData.name);
+
+  if (filterNames.length > 0) {
+    return res.status(400).json({
+      error: 'name already exists in phonebook',
+    });
+  }
   const maxId = Math.max(...persons.map((n) => n.id));
-  persons = persons.concat({ ...newPerson, id: maxId + 1 });
+  persons = persons.concat({ ...incomingData, id: maxId + 1 });
   res.json(persons);
 });
 
