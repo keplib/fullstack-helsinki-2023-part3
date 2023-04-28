@@ -6,6 +6,7 @@ let persons = require('./db.js');
 const PORT = 3001;
 
 const app = express();
+app.use(express.static('build'));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
 app.use(express.json());
 app.use(cors());
@@ -62,7 +63,7 @@ app.post('/api/persons', (req, res) => {
   }
   const maxId = Math.max(...persons.map((n) => n.id));
   persons = persons.concat({ ...incomingData, id: maxId + 1 });
-  res.json(persons);
+  res.json(incomingData);
 });
 
 app.listen(PORT, () => {
