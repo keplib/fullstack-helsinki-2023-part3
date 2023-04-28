@@ -1,8 +1,10 @@
 const express = require('express');
+const morgan = require('morgan');
 let persons = require('./db.js');
 const PORT = 3001;
 
 const app = express();
+app.use(morgan('tiny'));
 app.use(express.json());
 
 const today = new Date();
