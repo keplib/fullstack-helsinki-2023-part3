@@ -4,8 +4,12 @@ let persons = require('./db.js');
 const PORT = 3001;
 
 const app = express();
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
 app.use(express.json());
+
+morgan.token('content', (request) =>
+  request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
+);
 
 const today = new Date();
 
