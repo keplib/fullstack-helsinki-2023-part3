@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+require('dotenv').config();
+const phobebookModel = require('./models/phoneBookModel.js');
 
 let persons = require('./db.js');
 const PORT = process.env.PORT || 3001;
@@ -18,7 +20,9 @@ morgan.token('content', (request) =>
 const today = new Date();
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons);
+  phobebookModel.find({}).then((result) => {
+    res.json(result);
+  });
 });
 
 app.get('/info', (req, res) => {
