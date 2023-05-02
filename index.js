@@ -5,6 +5,7 @@ require('dotenv').config();
 const phobebookModel = require('./models/phoneBookModel.js');
 
 let persons = require('./db.js');
+const phoneBookModel = require('./models/phoneBookModel.js');
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -58,16 +59,25 @@ app.post('/api/persons', (req, res) => {
     });
   }
 
-  const filterNames = persons.filter((person) => person.name === incomingData.name);
+  const personToAdd = new phoneBookModel({
+    name: incomingData.name,
+    number: incomingData.number,
+  });
 
-  if (filterNames.length > 0) {
-    return res.status(400).json({
-      error: 'name already exists in phonebook',
-    });
-  }
-  const maxId = Math.max(...persons.map((n) => n.id));
-  persons = persons.concat({ ...incomingData, id: maxId + 1 });
-  res.json(incomingData);
+  personToAdd.save().then((result) => {
+    res.json(result);
+  });
+
+  // const filterNames = persons.filter((person) => person.name === incomingData.name);
+
+  // if (filterNames.length > 0) {
+  //   return res.status(400).json({
+  //     error: 'name already exists in phonebook',
+  //   });
+  // }
+  // const maxId = Math.max(...persons.map((n) => n.id));
+  // persons = persons.concat({ ...incomingData, id: maxId + 1 });
+  // res.json(incomingData);
 });
 
 app.listen(PORT, () => {
