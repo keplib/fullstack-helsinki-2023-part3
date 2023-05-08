@@ -32,18 +32,16 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id;
-  const person = persons.find((person) => person.id === Number(id));
-  person ? res.json(person) : res.status(404).end();
+  phobebookModel.findOne({ _id: id }).then((result) => {
+    res.json(result);
+  });
 });
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id;
-  const person = persons.find((person) => person.id === Number(id));
-  if (person) {
-    persons = persons.filter((person) => person.id !== Number(id));
-    res.status(204).end();
-  }
-  res.status(404).end();
+  phoneBookModel.deleteOne({ _id: id }).then((result) => {
+    res.json(result);
+  });
 });
 
 app.get('*', function (req, res) {
