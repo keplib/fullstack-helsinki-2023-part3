@@ -65,17 +65,20 @@ app.post('/api/persons', (req, res) => {
   personToAdd.save().then((result) => {
     res.json(result);
   });
+});
 
-  // const filterNames = persons.filter((person) => person.name === incomingData.name);
+app.put('/api/persons/:id', (req, res) => {
+  const id = req.params.id;
+  const incomingData = req.body;
 
-  // if (filterNames.length > 0) {
-  //   return res.status(400).json({
-  //     error: 'name already exists in phonebook',
-  //   });
-  // }
-  // const maxId = Math.max(...persons.map((n) => n.id));
-  // persons = persons.concat({ ...incomingData, id: maxId + 1 });
-  // res.json(incomingData);
+  if (!incomingData.number || !incomingData.name) {
+    return res.status(400).json({
+      error: 'number or name is missing',
+    });
+  }
+  phoneBookModel.updateOne({ _id: id }, { number: incomingData.number }).then((result) => {
+    res.send('worked!');
+  });
 });
 
 app.listen(PORT, () => {
