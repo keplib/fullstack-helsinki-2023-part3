@@ -20,16 +20,22 @@ morgan.token('content', (request) =>
 
 const today = new Date();
 
+//TODO - error handling
+//TODO - refactoring
+
+// works
 app.get('/api/persons', (req, res) => {
   phobebookModel.find({}).then((result) => {
     res.json(result);
   });
 });
 
+//TODO: connect /info with mongodb
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`);
 });
 
+//works
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   phobebookModel.findOne({ _id: id }).then((result) => {
@@ -37,6 +43,7 @@ app.get('/api/persons/:id', (req, res) => {
   });
 });
 
+// works
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   phoneBookModel.deleteOne({ _id: id }).then((result) => {
@@ -44,10 +51,12 @@ app.delete('/api/persons/:id', (req, res) => {
   });
 });
 
+// works
 app.get('*', function (req, res) {
   res.send('Page does not exist!', 404);
 });
 
+//works
 app.post('/api/persons', (req, res) => {
   const incomingData = req.body;
 
@@ -67,6 +76,7 @@ app.post('/api/persons', (req, res) => {
   });
 });
 
+//works
 app.put('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   const incomingData = req.body;
@@ -81,6 +91,7 @@ app.put('/api/persons/:id', (req, res) => {
   });
 });
 
+// works
 app.listen(PORT, () => {
   console.log(`server is listening on port ${PORT}`);
 });
