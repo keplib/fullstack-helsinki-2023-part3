@@ -2,10 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
-const phobebookModel = require('./models/phoneBookModel.js');
-
-let persons = require('./db.js');
-const phoneBookModel = require('./models/phoneBookModel.js');
+const phonebookModel = require('./models/phoneBookModel.js');
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -18,37 +15,33 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-const today = new Date();
-
 //TODO - error handling
-//TODO - refactoring
 
 // works
-app.get('/api/persons', (req, res) => {
-  phobebookModel.find({}).then((result) => {
-    res.json(result);
-  });
+app.get('/api/persons', async (req, res) => {
+  const result = await phonebookModel.find({});
+  res.json(result);
 });
 
-//TODO: connect /info with mongodb
-app.get('/info', (req, res) => {
+// works
+app.get('/info', async (req, res) => {
+  const today = new Date();
+  const persons = await phonebookModel.find({});
   res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`);
 });
 
 //works
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', async (req, res) => {
   const id = req.params.id;
-  phobebookModel.findOne({ _id: id }).then((result) => {
-    res.json(result);
-  });
+  const result = await phonebookModel.findOne({ _id: id });
+  res.json(result);
 });
 
 // works
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', async (req, res) => {
   const id = req.params.id;
-  phoneBookModel.deleteOne({ _id: id }).then((result) => {
-    res.json(result);
-  });
+  const result = await phonebookModel.deleteOne({ _id: id });
+  res.json(result);
 });
 
 // works
@@ -57,7 +50,7 @@ app.get('*', function (req, res) {
 });
 
 //works
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', async (req, res) => {
   const incomingData = req.body;
 
   if (!incomingData.number || !incomingData.name) {
@@ -66,18 +59,17 @@ app.post('/api/persons', (req, res) => {
     });
   }
 
-  const personToAdd = new phoneBookModel({
+  const personToAdd = new phonebookModel({
     name: incomingData.name,
     number: incomingData.number,
   });
 
-  personToAdd.save().then((result) => {
-    res.json(result);
-  });
+  const result = await personToAdd.save();
+  res.json(result);
 });
 
 //works
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', async (req, res) => {
   const id = req.params.id;
   const incomingData = req.body;
 
@@ -86,9 +78,8 @@ app.put('/api/persons/:id', (req, res) => {
       error: 'number or name is missing',
     });
   }
-  phoneBookModel.updateOne({ _id: id }, { number: incomingData.number }).then((result) => {
-    res.send('worked!');
-  });
+  const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
+  res.json(result);
 });
 
 // works
