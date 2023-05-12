@@ -15,15 +15,13 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-//TODO - error handling
-
-// works
+// TODO error handling
 app.get('/api/persons', async (req, res) => {
   const result = await phonebookModel.find({});
   res.json(result);
 });
 
-// works
+// TODO error handling
 app.get('/info', async (req, res) => {
   const today = new Date();
   const persons = await phonebookModel.find({});
@@ -32,24 +30,30 @@ app.get('/info', async (req, res) => {
 
 //works
 app.get('/api/persons/:id', async (req, res) => {
-  const id = req.params.id;
-  const result = await phonebookModel.findOne({ _id: id });
-  res.json(result);
+  try {
+    const result = await phonebookModel.findOne({ _id: req.params.id });
+    result ? res.json(result) : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
 // works
 app.delete('/api/persons/:id', async (req, res) => {
-  const id = req.params.id;
-  const result = await phonebookModel.deleteOne({ _id: id });
-  res.json(result);
+  try {
+    const result = await phonebookModel.deleteOne({ _id: req.params.id });
+    result ? res.json(result) : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
-// works
+// TODO error handling
 app.get('*', function (req, res) {
   res.send('Page does not exist!', 404);
 });
 
-//works
+//TODO error handling
 app.post('/api/persons', async (req, res) => {
   const incomingData = req.body;
 
@@ -68,7 +72,7 @@ app.post('/api/persons', async (req, res) => {
   res.json(result);
 });
 
-//works
+//TODO error handling
 app.put('/api/persons/:id', async (req, res) => {
   const id = req.params.id;
   const incomingData = req.body;
