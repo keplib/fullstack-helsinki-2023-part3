@@ -15,17 +15,31 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-// TODO error handling
+// TODO that JSON formatter to format mongoDB
+
+// TODO error handling in different module
+
+// works
 app.get('/api/persons', async (req, res) => {
-  const result = await phonebookModel.find({});
-  res.json(result);
+  try {
+    const result = await phonebookModel.find({});
+    result ? res.json(result) : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
-// TODO error handling
+// works
 app.get('/info', async (req, res) => {
-  const today = new Date();
-  const persons = await phonebookModel.find({});
-  res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`);
+  try {
+    const persons = await phonebookModel.find({});
+    const today = new Date();
+    result
+      ? res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`)
+      : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
 //works
@@ -48,17 +62,17 @@ app.delete('/api/persons/:id', async (req, res) => {
   }
 });
 
-// TODO error handling
+// works
 app.get('*', function (req, res) {
   res.send('Page does not exist!', 404);
 });
 
-//TODO error handling
+//works
 app.post('/api/persons', async (req, res) => {
   const incomingData = req.body;
 
   if (!incomingData.number || !incomingData.name) {
-    return res.status(400).json({
+    return res.json({
       error: 'number or name is missing',
     });
   }
@@ -68,22 +82,31 @@ app.post('/api/persons', async (req, res) => {
     number: incomingData.number,
   });
 
-  const result = await personToAdd.save();
-  res.json(result);
+  try {
+    const result = await personToAdd.save();
+    result ? res.json(result) : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
-//TODO error handling
+//works
 app.put('/api/persons/:id', async (req, res) => {
   const id = req.params.id;
   const incomingData = req.body;
 
   if (!incomingData.number || !incomingData.name) {
-    return res.status(400).json({
+    return res.json({
       error: 'number or name is missing',
     });
   }
-  const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
-  res.json(result);
+
+  try {
+    const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
+    result ? res.json(result) : res.status(404).end();
+  } catch (e) {
+    res.json(e);
+  }
 });
 
 // works
