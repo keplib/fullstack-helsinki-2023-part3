@@ -3,11 +3,28 @@ mongoose.set('strictQuery', false);
 
 const URL = process.env.MONGODB_URL;
 
-mongoose.connect(URL);
+const connectDB = async () => {
+  try {
+    await mongoose.connect(URL);
+    console.log('MongoDB connected!');
+  } catch (err) {
+    console.log('Failed to connect to MongoDB', err);
+  }
+};
+
+connectDB();
 
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
+});
+
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
 });
 
 module.exports = mongoose.model('Person', personSchema);
