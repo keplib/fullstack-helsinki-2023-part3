@@ -6,9 +6,9 @@ const phonebookModel = require('./models/phoneBookModel.js');
 const PORT = process.env.PORT || 3001;
 
 const app = express();
-app.use(express.static('build'));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
 app.use(express.json());
+app.use(express.static('build'));
 app.use(cors());
 
 morgan.token('content', (request) =>
