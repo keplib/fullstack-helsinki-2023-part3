@@ -15,8 +15,6 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-// TODO that JSON formatter to format mongoDB
-
 // TODO error handling in different module
 
 // works
@@ -25,7 +23,8 @@ app.get('/api/persons', async (req, res) => {
     const result = await phonebookModel.find({});
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'Could not fetch data from server' });
   }
 });
 
@@ -38,7 +37,8 @@ app.get('/info', async (req, res) => {
       ? res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`)
       : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'Could not fetch data from server' });
   }
 });
 
@@ -48,7 +48,8 @@ app.get('/api/persons/:id', async (req, res) => {
     const result = await phonebookModel.findOne({ _id: req.params.id });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'malformatted id' });
   }
 });
 
@@ -58,7 +59,8 @@ app.delete('/api/persons/:id', async (req, res) => {
     const result = await phonebookModel.deleteOne({ _id: req.params.id });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'malformatted id' });
   }
 });
 
@@ -86,7 +88,8 @@ app.post('/api/persons', async (req, res) => {
     const result = await personToAdd.save();
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'entry could not be saved!' });
   }
 });
 
@@ -105,7 +108,8 @@ app.put('/api/persons/:id', async (req, res) => {
     const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    res.json(e);
+    console.log(e);
+    res.status(400).send({ error: 'entry could not be saved!' });
   }
 });
 
