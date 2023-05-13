@@ -15,21 +15,18 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-// TODO error handling in different module
-
 // works
-app.get('/api/persons', async (req, res) => {
+app.get('/api/persons', async (req, res, next) => {
   try {
     const result = await phonebookModel.find({});
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'Could not fetch data from server' });
+    next(e);
   }
 });
 
 // works
-app.get('/info', async (req, res) => {
+app.get('/info', async (req, res, next) => {
   try {
     const persons = await phonebookModel.find({});
     const today = new Date();
@@ -37,40 +34,37 @@ app.get('/info', async (req, res) => {
       ? res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`)
       : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'Could not fetch data from server' });
+    next(e);
   }
 });
 
 //works
-app.get('/api/persons/:id', async (req, res) => {
+app.get('/api/persons/:id', async (req, res, next) => {
   try {
     const result = await phonebookModel.findOne({ _id: req.params.id });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'malformatted id' });
+    next(e);
   }
 });
 
 // works
-app.delete('/api/persons/:id', async (req, res) => {
+app.delete('/api/persons/:id', async (req, res, next) => {
   try {
     const result = await phonebookModel.deleteOne({ _id: req.params.id });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'malformatted id' });
+    next(e);
   }
 });
 
-// works
-app.get('*', function (req, res) {
-  res.send('Page does not exist!', 404);
-});
+// // works
+// app.get('*', function (req, res) {
+//   res.send('Page does not exist!', 404);
+// });
 
 //works
-app.post('/api/persons', async (req, res) => {
+app.post('/api/persons', async (req, res, next) => {
   const incomingData = req.body;
 
   if (!incomingData.number || !incomingData.name) {
@@ -88,13 +82,12 @@ app.post('/api/persons', async (req, res) => {
     const result = await personToAdd.save();
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'entry could not be saved!' });
+    next(e);
   }
 });
 
 //works
-app.put('/api/persons/:id', async (req, res) => {
+app.put('/api/persons/:id', async (req, res, next) => {
   const id = req.params.id;
   const incomingData = req.body;
 
@@ -108,10 +101,29 @@ app.put('/api/persons/:id', async (req, res) => {
     const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
     result ? res.json(result) : res.status(404).end();
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ error: 'entry could not be saved!' });
+    next(e);
   }
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 // works
 app.listen(PORT, () => {
