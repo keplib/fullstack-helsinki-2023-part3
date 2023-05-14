@@ -87,7 +87,11 @@ app.put('/api/persons/:id', async (req, res, next) => {
   }
 
   try {
-    const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
+    const result = await phonebookModel.updateOne(
+      { _id: id },
+      { number: incomingData.number },
+      { runValidators: true }
+    );
     result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
