@@ -15,55 +15,45 @@ morgan.token('content', (request) =>
   request.method === 'POST' && request.body.name ? JSON.stringify(request.body) : null
 );
 
-// works
 app.get('/api/persons', async (req, res, next) => {
   try {
     const result = await phonebookModel.find({});
-    result ? res.json(result) : res.status(404).end();
+    result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
   }
 });
 
-// works
 app.get('/info', async (req, res, next) => {
   try {
     const persons = await phonebookModel.find({});
     const today = new Date();
     result
       ? res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`)
-      : res.status(404).end();
+      : res.status(400).end();
   } catch (e) {
     next(e);
   }
 });
 
-//works
 app.get('/api/persons/:id', async (req, res, next) => {
   try {
     const result = await phonebookModel.findOne({ _id: req.params.id });
-    result ? res.json(result) : res.status(404).end();
+    result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
   }
 });
 
-// works
 app.delete('/api/persons/:id', async (req, res, next) => {
   try {
     const result = await phonebookModel.deleteOne({ _id: req.params.id });
-    result ? res.json(result) : res.status(404).end();
+    result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
   }
 });
 
-// // works
-// app.get('*', function (req, res) {
-//   res.send('Page does not exist!', 404);
-// });
-
-//works
 app.post('/api/persons', async (req, res, next) => {
   const incomingData = req.body;
 
@@ -80,13 +70,12 @@ app.post('/api/persons', async (req, res, next) => {
 
   try {
     const result = await personToAdd.save();
-    result ? res.json(result) : res.status(404).end();
+    result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
   }
 });
 
-//works
 app.put('/api/persons/:id', async (req, res, next) => {
   const id = req.params.id;
   const incomingData = req.body;
@@ -99,7 +88,7 @@ app.put('/api/persons/:id', async (req, res, next) => {
 
   try {
     const result = await phonebookModel.updateOne({ _id: id }, { number: incomingData.number });
-    result ? res.json(result) : res.status(404).end();
+    result ? res.json(result) : res.status(400).end();
   } catch (e) {
     next(e);
   }
@@ -125,7 +114,6 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler);
 
-// works
 app.listen(PORT, () => {
   console.log(`server is listening on port ${PORT}`);
 });
