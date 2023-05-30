@@ -28,7 +28,7 @@ app.get('/info', async (req, res, next) => {
   try {
     const persons = await phonebookModel.find({});
     const today = new Date();
-    result
+    persons
       ? res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${today.toString()}</p>`)
       : res.status(400).end();
   } catch (e) {
